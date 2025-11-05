@@ -1,68 +1,50 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FaTimes } from 'react-icons/fa';
-import foto1 from '../assets/gallery/foto1.jpg';
-import foto2 from '../assets/gallery/foto2.jpg';
-import foto3 from '../assets/gallery/foto3.jpg';
-import foto4 from '../assets/gallery/foto4.jpg';
-import foto5 from '../assets/gallery/foto5.jpg';
-import foto6 from '../assets/gallery/foto6.jpg';
-import foto7 from '../assets/gallery/foto7.jpg';
-import foto8 from '../assets/gallery/foto8.jpg';
+import DynamicImage from '../components/DynamicImage';
+
+// Importar todas las fotos de la galería por defecto
+import foto1Default from '../assets/gallery/foto1.jpg';
+import foto2Default from '../assets/gallery/foto2.jpg';
+import foto3Default from '../assets/gallery/foto3.jpg';
+import foto4Default from '../assets/gallery/foto4.jpg';
+import foto5Default from '../assets/gallery/foto5.jpg';
+import foto6Default from '../assets/gallery/foto6.jpg';
+import foto7Default from '../assets/gallery/foto7.jpg';
+import foto8Default from '../assets/gallery/foto8.jpg';
 
 const Gallery = () => {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [images, setImages] = useState([]);
 
-  // Imágenes del club
-  const images = [
-    {
-      id: 1,
-      src: foto1,
-      title: 'Entrenamiento Sub-7',
-      description: 'Niños en sesión de entrenamiento',
-    },
-    {
-      id: 2,
-      src: foto2,
-      title: 'Partido Amistoso',
-      description: 'Encuentro deportivo con otro club',
-    },
-    {
-      id: 3,
-      src: foto3,
-      title: 'Celebración de Gol',
-      description: 'Momento de alegría en el campo',
-    },
-    {
-      id: 4,
-      src: foto4,
-      title: 'Equipo Sub-11',
-      description: 'Foto oficial del equipo',
-    },
-    {
-      id: 5,
-      src: foto5,
-      title: 'Torneo Local',
-      description: 'Participación en competencia',
-    },
-    {
-      id: 6,
-      src: foto6,
-      title: 'Entrenadores',
-      description: 'Nuestro equipo técnico',
-    },
-    {
-      id: 7,
-      src: foto7,
-      title: 'Premiación',
-      description: 'Entrega de medallas y trofeos',
-    },
-    {
-      id: 8,
-      src: foto8,
-      title: 'Instalaciones',
-      description: 'Cancha donde entrenamos',
-    },
-  ];
+  useEffect(() => {
+    loadImages();
+  }, []);
+
+  const loadImages = () => {
+    const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    
+    const baseImages = [
+      { id: 1, defaultSrc: foto1Default, type: 'foto1', title: 'Entrenamiento Sub-7', description: 'Niños en sesión de entrenamiento' },
+      { id: 2, defaultSrc: foto2Default, type: 'foto2', title: 'Partido Amistoso', description: 'Encuentro deportivo con otro club' },
+      { id: 3, defaultSrc: foto3Default, type: 'foto3', title: 'Celebración de Gol', description: 'Momento de alegría en el campo' },
+      { id: 4, defaultSrc: foto4Default, type: 'foto4', title: 'Equipo Sub-11', description: 'Foto oficial del equipo' },
+      { id: 5, defaultSrc: foto5Default, type: 'foto5', title: 'Torneo Local', description: 'Participación en competencia' },
+      { id: 6, defaultSrc: foto6Default, type: 'foto6', title: 'Entrenadores', description: 'Nuestro equipo técnico' },
+      { id: 7, defaultSrc: foto7Default, type: 'foto7', title: 'Premiación', description: 'Entrega de medallas y trofeos' },
+      { id: 8, defaultSrc: foto8Default, type: 'foto8', title: 'Instalaciones', description: 'Cancha donde entrenamos' },
+    ];
+
+    if (isDevelopment) {
+      setImages(baseImages.map(img => ({ ...img, src: img.defaultSrc })));
+    } else {
+      // Intentar cargar desde uploads/
+      const loadedImages = baseImages.map(img => {
+        const uploadsPath = `/uploads/gallery/${img.type}.jpg?v=${Date.now()}`;
+        return { ...img, src: uploadsPath, fallbackSrc: img.defaultSrc };
+      });
+      setImages(loadedImages);
+    }
+  };
 
   const openModal = (image) => {
     setSelectedImage(image);
@@ -102,10 +84,13 @@ const Gallery = () => {
                   className="w-full h-64 object-cover"
                   style={{ display: 'block', width: '100%', height: '256px', objectFit: 'cover' }}
                   onError={(e) => {
-                    console.error('Error cargando imagen:', image.title);
-                    e.target.style.backgroundColor = '#ff0000';
+                    // Si falla cargar desde uploads/, usar la imagen por defecto
+                    if (image.fallbackSrc) {
+                      e.target.src = image.fallbackSrc;
+                    } else if (image.defaultSrc) {
+                      e.target.src = image.defaultSrc;
+                    }
                   }}
-                  onLoad={() => console.log('Imagen cargada:', image.title)}
                 />
 
                 {/* Overlay - solo visible al hover */}
@@ -193,6 +178,13 @@ const Gallery = () => {
               src={selectedImage.src} 
               alt={selectedImage.title}
               className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
+              onError={(e) => {
+                if (selectedImage.fallbackSrc) {
+                  e.target.src = selectedImage.fallbackSrc;
+                } else if (selectedImage.defaultSrc) {
+                  e.target.src = selectedImage.defaultSrc;
+                }
+              }}
             />
             <div className="mt-4 text-white text-center">
               <h3 className="text-2xl font-bold mb-2">{selectedImage.title}</h3>

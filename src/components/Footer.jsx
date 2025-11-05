@@ -115,10 +115,21 @@ const Footer = () => {
         </div>
 
         {/* Copyright */}
-        <div className="border-t border-gray-700 mt-8 pt-8 text-center">
-          <p className="text-gray-400 text-sm">
-            &copy; {currentYear} CLUB VR Futsal. Todos los derechos reservados.
-          </p>
+        <div className="border-t border-gray-700 mt-8 pt-8">
+          <div className="flex justify-between items-center">
+            <p className="text-gray-400 text-sm">
+              &copy; {currentYear} CLUB VR Futsal. Todos los derechos reservados.
+            </p>
+            
+            {/* Botón discreto de administración */}
+            <Link
+              to="/admin/login"
+              className="text-gray-600 hover:text-primary transition-colors text-xs opacity-50 hover:opacity-100"
+              title="Panel de Administración"
+            >
+              Admin
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

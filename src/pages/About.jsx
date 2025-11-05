@@ -1,7 +1,22 @@
+import { useState, useEffect } from 'react';
 import { FaCheck, FaBullseye, FaEye, FaStar } from 'react-icons/fa';
-import aboutImage from '../assets/about-team.jpg';
+import aboutImageDefault from '../assets/about-team.jpg';
 
 const About = () => {
+  const [aboutImage, setAboutImage] = useState(aboutImageDefault);
+
+  useEffect(() => {
+    // Intentar cargar imagen desde uploads/
+    const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    
+    if (!isDevelopment) {
+      const img = new Image();
+      img.onload = () => setAboutImage('/uploads/about-team.jpg?v=' + Date.now());
+      img.onerror = () => setAboutImage(aboutImageDefault);
+      img.src = '/uploads/about-team.jpg';
+    }
+  }, []);
+
   return (
     <div className="min-h-screen pt-20">
       {/* Hero Section */}

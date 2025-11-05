@@ -1,8 +1,23 @@
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { FaTrophy, FaUsers, FaFutbol, FaHeart } from 'react-icons/fa';
-import heroBg from '../assets/hero-bg.jpg';
+import heroBgDefault from '../assets/hero-bg.jpg';
 
 const Home = () => {
+  const [heroBg, setHeroBg] = useState(heroBgDefault);
+
+  useEffect(() => {
+    // Intentar cargar imagen desde uploads/
+    const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    
+    if (!isDevelopment) {
+      const img = new Image();
+      img.onload = () => setHeroBg('/uploads/hero-bg.jpg?v=' + Date.now());
+      img.onerror = () => setHeroBg(heroBgDefault);
+      img.src = '/uploads/hero-bg.jpg';
+    }
+  }, []);
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
