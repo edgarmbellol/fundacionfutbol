@@ -1,0 +1,68 @@
+═══════════════════════════════════════════════════════════════
+  📸 GUÍA RÁPIDA: DÓNDE PONER TUS IMÁGENES
+═══════════════════════════════════════════════════════════════
+
+📁 UBICACIONES DE TUS FOTOS:
+────────────────────────────────────────────────────────────────
+
+1️⃣  IMAGEN DE FONDO DE LA PÁGINA PRINCIPAL
+    📂 Guardar en: src/assets/hero-bg.jpg
+    📝 Editar archivo: src/pages/Home.jsx
+    💡 Tipo: Foto grande del equipo jugando (1920x1080px)
+
+2️⃣  FOTO DEL EQUIPO PARA "SOBRE NOSOTROS"  
+    📂 Guardar en: src/assets/about-team.jpg
+    📝 Editar archivo: src/pages/About.jsx
+    💡 Tipo: Foto grupal del equipo o instalaciones
+
+3️⃣  FOTOS DE LA GALERÍA (8 fotos)
+    📂 Guardar en: src/assets/gallery/
+    
+    Nombra las fotos así:
+    ├── foto1.jpg  (Entrenamientos)
+    ├── foto2.jpg  (Partidos)
+    ├── foto3.jpg  (Celebraciones)
+    ├── foto4.jpg  (Equipos)
+    ├── foto5.jpg  (Torneos)
+    ├── foto6.jpg  (Entrenadores)
+    ├── foto7.jpg  (Premiaciones)
+    └── foto8.jpg  (Instalaciones)
+    
+    📝 Editar archivo: src/pages/Gallery.jsx
+    💡 Tipo: Fotos variadas de actividades (800x600px aprox)
+
+════════════════════════════════════════════════════════════════
+
+🎯 PASOS SIMPLES:
+
+1. Descarga las fotos del Facebook del club
+2. Renómbralas como se indica arriba
+3. Cópialas a las carpetas indicadas
+4. Abre el archivo GUIA-IMAGENES.md para ver cómo editarlas
+5. Ejecuta: npm run build
+6. ¡Listo!
+
+════════════════════════════════════════════════════════════════
+
+📋 RESUMEN DE ARCHIVOS A EDITAR:
+
+✏️  src/pages/Home.jsx    → Para la imagen de fondo principal
+✏️  src/pages/About.jsx   → Para la foto del equipo
+✏️  src/pages/Gallery.jsx → Para las 8 fotos de la galería
+
+════════════════════════════════════════════════════════════════
+
+💡 TIPS:
+
+✅ Usa fotos horizontales (paisaje)
+✅ Optimiza las fotos en tinypng.com antes de usarlas
+✅ Nombres de archivo sin espacios ni tildes
+✅ Formato JPG o PNG
+
+════════════════════════════════════════════════════════════════
+
+Lee el archivo GUIA-IMAGENES.md para instrucciones detalladas
+con ejemplos de código.
+
+
+
