@@ -31,8 +31,24 @@ const AdminDashboard = () => {
       return;
     }
 
-    // Cargar imágenes actuales desde el servidor
-    loadCurrentImages();
+    if (import.meta.env.DEV) {
+      loadCurrentImages();
+      return;
+    }
+
+    // Confirmar con el servidor que la sesión sigue activa
+    fetch('/api/auth.php', { credentials: 'same-origin' })
+      .then((r) => r.json())
+      .then((data) => {
+        if (!data.authenticated) {
+          sessionStorage.removeItem('adminAuth');
+          sessionStorage.removeItem('adminUser');
+          navigate('/admin/login');
+          return;
+        }
+        loadCurrentImages();
+      })
+      .catch(() => loadCurrentImages());
   }, [navigate]);
 
   const loadCurrentImages = async () => {
@@ -79,9 +95,21 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     sessionStorage.removeItem('adminAuth');
     sessionStorage.removeItem('adminUser');
+    if (!import.meta.env.DEV) {
+      try {
+        await fetch('/api/auth.php', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+          body: JSON.stringify({ action: 'logout' }),
+        });
+      } catch {
+        // Ignorar errores de red al cerrar sesión
+      }
+    }
     navigate('/');
   };
 
@@ -146,10 +174,19 @@ const AdminDashboard = () => {
     try {
       const response = await fetch('/api/upload-image.php', {
         method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
         body: formData,
       });
 
       const data = await response.json();
+
+      if (response.status === 401) {
+        sessionStorage.removeItem('adminAuth');
+        sessionStorage.removeItem('adminUser');
+        navigate('/admin/login');
+        return;
+      }
 
       if (data.success) {
         setMessage({ type: 'success', text: '¡Imagen actualizada exitosamente! Recarga la página para ver los cambios.' });

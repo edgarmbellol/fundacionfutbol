@@ -1,11 +1,16 @@
-# Permitir acceso a archivos PHP en esta carpeta
+# Permitir acceso a los endpoints PHP de esta carpeta
 <Files "*.php">
     Order Allow,Deny
     Allow from all
 </Files>
 
+# Bloquear archivos internos y de configuración
+<FilesMatch "^(_lib|config|config\.example)\.php$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
 # Aumentar límite de subida de archivos
 php_value upload_max_filesize 10M
 php_value post_max_size 10M
 php_value max_execution_time 300
-

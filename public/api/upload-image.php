@@ -1,8 +1,8 @@
 <?php
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, GET');
-header('Access-Control-Allow-Headers: Content-Type');
+require_once __DIR__ . '/_lib.php';
+
+// CORS restringido al dominio configurado (ya no se permite '*')
+api_headers('GET, POST');
 
 // Respuesta por defecto
 $response = ['success' => false, 'message' => ''];
@@ -37,6 +37,9 @@ try {
         throw new Exception('Método no permitido');
     }
 
+    // Solo administradores autenticados (sesión creada en api/auth.php)
+    require_admin();
+
     // Verificar que se haya subido un archivo
     if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
         throw new Exception('No se recibió ningún archivo o hubo un error en la subida');
@@ -47,8 +50,12 @@ try {
         throw new Exception('No se especificó el tipo de imagen');
     }
 
-    $type = $_POST['type'];
+    $type = (string)$_POST['type'];
     $file = $_FILES['image'];
+
+    if (!is_uploaded_file($file['tmp_name'])) {
+        throw new Exception('Archivo no válido');
+    }
 
     // Validar el tipo de archivo
     $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
@@ -56,8 +63,14 @@ try {
     $fileType = finfo_file($finfo, $file['tmp_name']);
     finfo_close($finfo);
     
-    if (!in_array($fileType, $allowedTypes)) {
+    if (!in_array($fileType, $allowedTypes, true)) {
         throw new Exception('Tipo de archivo no permitido. Solo se permiten JPG, PNG y WEBP');
+    }
+
+    // Comprobar que realmente es una imagen válida
+    $imageInfo = @getimagesize($file['tmp_name']);
+    if ($imageInfo === false || !in_array($imageInfo['mime'], $allowedTypes, true)) {
+        throw new Exception('El archivo no es una imagen válida');
     }
 
     // Validar el tamaño del archivo (máximo 5MB)
@@ -106,5 +119,3 @@ try {
 }
 
 echo json_encode($response);
-?>
-

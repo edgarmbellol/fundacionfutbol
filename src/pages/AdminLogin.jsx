@@ -10,27 +10,46 @@ const AdminLogin = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    // Credenciales
-    const ADMIN_USER = 'admin';
-    const ADMIN_PASS = 'Zencode123*';
+    // En desarrollo local (npm run dev) no hay PHP: se simula el acceso.
+    // Esta rama se elimina del build de producción.
+    if (import.meta.env.DEV) {
+      sessionStorage.setItem('adminAuth', 'true');
+      sessionStorage.setItem('adminUser', username || 'dev');
+      navigate('/admin/dashboard');
+      return;
+    }
 
-    // Simular delay de autenticación
-    setTimeout(() => {
-      if (username === ADMIN_USER && password === ADMIN_PASS) {
-        // Guardar sesión
+    try {
+      // La contraseña se valida en el servidor (api/auth.php) contra un hash
+      // guardado en la configuración privada del hosting.
+      const response = await fetch('/api/auth.php', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: JSON.stringify({ action: 'login', username, password }),
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (response.ok && data.success) {
         sessionStorage.setItem('adminAuth', 'true');
-        sessionStorage.setItem('adminUser', username);
+        sessionStorage.setItem('adminUser', data.user || username);
         navigate('/admin/dashboard');
       } else {
-        setError('Usuario o contraseña incorrectos');
+        setError(data.message || 'Usuario o contraseña incorrectos');
         setLoading(false);
       }
-    }, 500);
+    } catch {
+      setError('Error de conexión con el servidor. Verifica que PHP esté habilitado.');
+      setLoading(false);
+    }
   };
 
   return (

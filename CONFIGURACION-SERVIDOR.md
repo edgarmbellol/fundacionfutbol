@@ -55,8 +55,7 @@ https://tu-sitio.com/admin/login
 ```
 
 ### 2. Iniciar sesión:
-- **Usuario:** `admin`
-- **Contraseña:** `Zencode123*`
+- **Usuario y contraseña:** los configurados en `admin-config.php` (ver ADMIN-README.md, sección "Configurar la contraseña del panel")
 
 ### 3. Probar subida de imagen:
 1. Selecciona "Cambiar Imagen" en cualquier foto
@@ -137,6 +136,8 @@ Antes de usar el panel de administración, verifica:
 - [ ] Permisos de `uploads/gallery/` establecidos en 755 o 777
 - [ ] Archivo `api/upload-image.php` existe en el servidor
 - [ ] Archivo `api/.htaccess` existe en el servidor
+- [ ] Archivo `api/auth.php` existe en el servidor
+- [ ] `admin-config.php` creado fuera de `public_html` (o `api/config.php`) con el hash de la contraseña
 - [ ] PHP está habilitado en el hosting
 - [ ] Puedes acceder a `/admin/login`
 - [ ] Puedes iniciar sesión con las credenciales
@@ -159,6 +160,8 @@ public_html/
 │       ├── ... (hasta foto8.jpg)
 ├── api/
 │   ├── upload-image.php  ← Script PHP (permisos 644)
+│   ├── auth.php          ← Inicio de sesión del panel
+│   ├── _lib.php          ← Funciones comunes (no accesible directo)
 │   └── .htaccess
 └── assets/
     ├── [CSS, JS compilados]
