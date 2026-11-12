@@ -3,8 +3,8 @@
 ## Acceso al Panel
 
 ### Credenciales de Administrador:
-- **Usuario:** `admin`
-- **Contraseña:** `Zencode123*`
+- **Usuario:** el definido en `admin-config.php` del servidor
+- **Contraseña:** la que configuraste (ver "Configurar la contraseña del panel")
 
 ### Cómo acceder:
 
@@ -22,6 +22,18 @@ Puedes acceder directamente a: `tu-sitio.com/admin/login`
 ## ⚠️ IMPORTANTE - Configuración en el Hosting
 
 Después de subir los archivos al hosting, necesitas:
+
+### 0. Configurar la contraseña del panel (obligatorio)
+La contraseña **ya no está en el código**. Se valida en el servidor (`api/auth.php`) contra un hash guardado en un archivo privado:
+
+1. Copia `api/config.example.php` **fuera** de `public_html` (un nivel arriba) con el nombre `admin-config.php`. Si tu hosting no lo permite, guárdalo como `api/config.php` (está bloqueado por `.htaccess` y nunca se sube a Git).
+2. Genera el hash de tu contraseña:
+   ```bash
+   php -r "echo password_hash('TU_CONTRASEÑA_NUEVA', PASSWORD_DEFAULT), PHP_EOL;"
+   ```
+   (Si no tienes PHP en tu PC, usa la terminal SSH del hosting.)
+3. Pega el hash en `admin_password_hash`, define `admin_user` y pon tu dominio en `allowed_origins`.
+
 
 ### 1. Verificar que PHP esté habilitado
 El panel de administración requiere PHP para funcionar. La mayoría de hostings compartidos ya lo tienen.
@@ -128,16 +140,9 @@ Verás una lista de todas las imágenes que puedes cambiar:
 
 Para cambiar la contraseña del administrador:
 
-1. Abre el archivo: `src/pages/AdminLogin.jsx`
-2. Busca estas líneas (aproximadamente línea 14-15):
-```javascript
-const ADMIN_USER = 'admin';
-const ADMIN_PASS = 'Zencode123*';
-```
-3. Cambia `'Zencode123*'` por tu nueva contraseña
-4. Guarda el archivo
-5. Ejecuta `npm run build` para recompilar
-6. Sube el nuevo build al hosting
+1. Genera un hash nuevo: `php -r "echo password_hash('TU_CONTRASEÑA_NUEVA', PASSWORD_DEFAULT), PHP_EOL;"`
+2. Reemplaza `admin_password_hash` en `admin-config.php` (en el servidor)
+3. No hace falta recompilar ni volver a subir el sitio
 
 ### Recomendaciones de Seguridad:
 - ✅ Cambia la contraseña por defecto
@@ -176,8 +181,8 @@ const ADMIN_PASS = 'Zencode123*';
 **Causa:** Credenciales incorrectas
 **Solución:** 
 1. Verifica que estés usando:
-   - Usuario: `admin`
-   - Contraseña: `Zencode123*` (distingue mayúsculas/minúsculas)
+   - El usuario y la contraseña configurados en `admin-config.php` (distingue mayúsculas/minúsculas)
+   - Que exista `admin-config.php` (o `api/config.php`) en el servidor
 2. Asegúrate de no tener espacios adicionales
 
 ---
@@ -197,7 +202,7 @@ Puedes gestionar las imágenes desde cualquier dispositivo.
 ## 🎯 Resumen Rápido
 
 1. **Acceder:** Footer → "Admin" o ir a `/admin/login`
-2. **Login:** Usuario: `admin` / Contraseña: `Zencode123*`
+2. **Login:** Usuario y contraseña definidos en `admin-config.php`
 3. **Seleccionar:** Click en "Seleccionar Imagen" de la foto a cambiar
 4. **Subir:** Elige archivo, revisa preview, click "Subir Imagen"
 5. **Ver:** Recarga la página web (Ctrl+F5)
